@@ -15,6 +15,7 @@ This document presents a high-level technical assessment of the architectural st
 | **Graph RAG** | Excellent | Poor | Excellent | Excellent (Text-based) | Satisfactory (75%) |
 | **Multimodal RAG**| Excellent | Poor | Marginal | Excellent (Vision-based) | Satisfactory (75%) |
 | **HyDE RAG** | Outstanding | Poor | Marginal | Excellent (Text-based) | Satisfactory (75%) |
+| **Self-Ask RAG** | Excellent | Excellent | Outstanding | Excellent (Text-based) | Outstanding (90%) |
 
 ---
 
@@ -34,6 +35,9 @@ Handling structural diagrams, physical PDFs, and charted data requires passing r
 
 ### 2.5 Zero-Shot Query Expansion (HyDE)
 The Hypothetical Document Embeddings (HyDE) architecture significantly enhances recall for sparse or poorly constructed user queries by generating a synthetic "ideal" document and embedding it for retrieval. This is highly recommended for consumer-facing RAG endpoints where query quality cannot be guaranteed.
+
+### 2.6 Multi-hop Reasoning (Self-Ask)
+The Self-Ask paradigm resolves complex compositional questions by explicitly decomposing them into simpler sub-queries. By independently retrieving and answering each sub-query before synthesizing the final response, it virtually eliminates logic-based hallucinations and matches Graph-RAG in multi-hop performance without requiring a complex Neo4j backend setup.
 
 ## 3. Deployment Recommendation: Hybrid Architecture
 
