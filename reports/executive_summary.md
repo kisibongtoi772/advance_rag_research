@@ -16,6 +16,7 @@ This document presents a high-level technical assessment of the architectural st
 | **Multimodal RAG**| Excellent | Poor | Marginal | Excellent (Vision-based) | Satisfactory (75%) |
 | **HyDE RAG** | Outstanding | Poor | Marginal | Excellent (Text-based) | Satisfactory (75%) |
 | **Self-Ask RAG** | Excellent | Excellent | Outstanding | Excellent (Text-based) | Outstanding (90%) |
+| **Corrective RAG**| Excellent | Excellent | Excellent | Outstanding (Robustness)| Outstanding (92%) |
 
 ---
 
@@ -38,6 +39,9 @@ The Hypothetical Document Embeddings (HyDE) architecture significantly enhances 
 
 ### 2.6 Multi-hop Reasoning (Self-Ask)
 The Self-Ask paradigm resolves complex compositional questions by explicitly decomposing them into simpler sub-queries. By independently retrieving and answering each sub-query before synthesizing the final response, it virtually eliminates logic-based hallucinations and matches Graph-RAG in multi-hop performance without requiring a complex Neo4j backend setup.
+
+### 2.7 Retrieval Robustness (Corrective RAG - CRAG)
+CRAG introduces a self-correction loop where retrieved documents are evaluated for relevance prior to generation. If deemed irrelevant, the framework automatically rewrites the query and performs a secondary retrieval. This significantly reduces hallucinations caused by noisy retrievals with minimal latency overhead.
 
 ## 3. Deployment Recommendation: Hybrid Architecture
 
