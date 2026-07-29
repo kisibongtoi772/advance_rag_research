@@ -1,0 +1,27 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "rag_framework"
+version = "0.1.0"
+description = "Advanced RAG Evaluation and Testing Framework"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "typer>=0.9.0",
+    "rich>=13.0.0",
+    "pydantic>=2.0.0",
+    "pyyaml>=6.0.1",
+    "ragas>=0.1.0",         # For evaluation
+    "langchain>=0.1.0",     # For adapter implementations
+    "llama-index>=0.10.0",  # Alternative engine integration
+    "chromadb>=0.4.0",      # Default vector store
+    "openai>=1.0.0",        # Default LLM provider
+]
+
+[project.scripts]
+rag-framework = "rag_framework.cli:app"
+
+[tool.setuptools.packages.find]
+where = ["src"]
