@@ -2,13 +2,13 @@
 
 ## Abstract
 
-The Advance RAG Research Framework is an enterprise-grade, modular architecture designed for the implementation, testing, and evaluation of advanced Retrieval-Augmented Generation (RAG) systems. The framework acts as a quantitative and qualitative testing ground to benchmark standard baseline RAG methodologies against highly optimized architectures, specifically Self-Reflective RAG (Self-RAG) and Graph-based RAG (Graph-RAG).
+The Advance RAG Research Framework is an enterprise-grade, modular architecture designed for the implementation, testing, and evaluation of advanced Retrieval-Augmented Generation (RAG) systems. The framework acts as a quantitative and qualitative testing ground to benchmark standard baseline RAG methodologies against highly optimized architectures, specifically Self-Reflective RAG (Self-RAG), Graph-based RAG (Graph-RAG), HyDE, and Self-Ask.
 
 ---
 
 ## 1. System Architecture
 
-The codebase adheres strictly to Clean Architecture principles, ensuring clear segregation between interfaces, core orchestration logic, and specific infrastructure implementations.
+The codebase adheres strictly to Clean Architecture principles, employing the **Provider Factory** pattern to seamlessly hot-swap between major LLM vendors.
 
 ```text
 advance_rag_research/
@@ -16,16 +16,15 @@ advance_rag_research/
 ├── reports/                  # Evaluation metrics and architectural findings
 ├── src/
 │   └── rag_framework/
-│       ├── architectures/    # Core RAG Orchestration logic (Basic, Self, Graph)
+│       ├── architectures/    # Core RAG Orchestration logic (Basic, Self, Graph, HyDE, Self-Ask)
 │       ├── core/             # Pydantic domain models and Base Interfaces
 │       ├── data_loaders/     # Data ingestion and preprocessing pipelines
-│       ├── embeddings/       # Semantic embedding models (e.g., OpenAI text-embedding)
 │       ├── evaluators/       # Quantitative evaluation logic
-│       ├── generators/       # LLM generation components (OpenAI, Dummy)
+│       ├── providers/        # LLM Provider Implementations (OpenAI, Anthropic, Google, Qwen, DeepSeek)
 │       ├── retrievers/       # Information retrieval protocols
 │       ├── vector_stores/    # Storage layers (e.g., ChromaDB, InMemory)
 │       └── cli.py            # Command Line Interface application entry point
-├── .agents/skills/           # Automated Agent Skills for auxiliary operations
+├── .agents/                  # Automated Agent Skills for auxiliary operations
 └── pyproject.toml            # Python package configuration and dependencies
 ```
 
@@ -33,12 +32,16 @@ advance_rag_research/
 
 ## 2. Prerequisites and Setup
 
-The framework requires a standard Python environment and an active OpenAI API key for live model generation and embedding.
+The framework requires a standard Python environment and an active API key for the models you intend to test.
 
 1. Ensure Python 3.10+ is installed on the host machine.
-2. Export the required authentication keys:
+2. Export the required authentication keys based on your provider:
    ```bash
    export OPENAI_API_KEY="your_api_key_here"
+   export ANTHROPIC_API_KEY="your_api_key_here"
+   export GEMINI_API_KEY="your_api_key_here"
+   export DEEPSEEK_API_KEY="your_api_key_here"
+   export DASHSCOPE_API_KEY="your_api_key_here" # For Qwen
    ```
 3. Install the package dependencies in editable mode:
    ```bash
@@ -49,7 +52,7 @@ The framework requires a standard Python environment and an active OpenAI API ke
 
 ## 3. Execution Protocols (CLI)
 
-The framework exposes a Typer-based CLI (`rag-framework`) for streamlined execution. It utilizes the `--arch` argument to hot-swap the underlying RAG orchestration engine.
+The framework exposes a Typer-based CLI (`rag-framework`) for streamlined execution. It utilizes the `--arch` argument to select the RAG engine and `--provider` to select the LLM vendor.
 
 ### 3.1 Data Ingestion
 Loads and indexes documents into the selected storage layer.
@@ -58,27 +61,37 @@ PYTHONPATH=src python3 src/rag_framework/cli.py ingest datasets/corpus.json --ch
 ```
 
 ### 3.2 Query Execution
-Tests specific queries against the designated RAG architectures.
+Test specific queries against the designated RAG architectures across any provider.
 
 **Standard Vector Search (Basic RAG)**
 ```bash
-PYTHONPATH=src python3 src/rag_framework/cli.py run "What is the QuantumX processor?" --arch basic
+PYTHONPATH=src python3 src/rag_framework/cli.py run "What is the QuantumX processor?" --arch basic --provider openai
 ```
 
 **Anti-Hallucination Loop (Self-RAG)**
 ```bash
-PYTHONPATH=src python3 src/rag_framework/cli.py run "Who is the CEO of VisionAI?" --arch self
+PYTHONPATH=src python3 src/rag_framework/cli.py run "Who is the CEO of VisionAI?" --arch self --provider anthropic
 ```
 
 **Multi-hop Entity Reasoning (Graph RAG)**
 ```bash
-PYTHONPATH=src python3 src/rag_framework/cli.py run "What product is made by the company acquired by NovaTech?" --arch graph
+PYTHONPATH=src python3 src/rag_framework/cli.py run "What product is made by the company acquired by NovaTech?" --arch graph --provider google
+```
+
+**Zero-Shot Query Expansion (HyDE RAG)**
+```bash
+PYTHONPATH=src python3 src/rag_framework/cli.py run "How to optimize latent representations?" --arch hyde --provider deepseek
+```
+
+**Multi-hop Compositional Reasoning (Self-Ask RAG)**
+```bash
+PYTHONPATH=src python3 src/rag_framework/cli.py run "Who was the president when the first moon landing happened?" --arch self_ask --provider qwen
 ```
 
 ### 3.3 Automated Evaluation
-Executes the evaluator module to benchmark a specific architecture against a standardized JSON evaluation dataset, calculating Context Precision, Recall, and Faithfulness.
+Executes the evaluator module to benchmark a specific architecture against a standardized JSON evaluation dataset.
 ```bash
-PYTHONPATH=src python3 src/rag_framework/cli.py evaluate --dataset datasets/qa_eval.json --arch self
+PYTHONPATH=src python3 src/rag_framework/cli.py evaluate --dataset datasets/qa_eval.json --arch hyde --provider openai
 ```
 
 ---
