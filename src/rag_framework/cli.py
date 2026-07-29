@@ -6,9 +6,14 @@ from rag_framework.data_loaders.text_loader import TextLoader
 from rag_framework.vector_stores.in_memory import InMemoryVectorStore
 from rag_framework.retrievers.basic_retriever import BasicRetriever
 from rag_framework.generators.dummy_generator import DummyGenerator
-from rag_framework.pipelines.standard_pipeline import StandardRAGPipeline
 
-app = typer.Typer(help="Advanced RAG Evaluation and Testing Framework CLI")
+# Import architectures
+from rag_framework.architectures.basic_rag import BasicRAG
+from rag_framework.architectures.self_rag import SelfRAG
+from rag_framework.architectures.graph_rag import GraphRAG
+from rag_framework.architectures.multimodal_rag import MultimodalRAG
+
+app = typer.Typer(help="Enterprise Multi-Architecture RAG Framework CLI")
 console = Console()
 
 @app.command()
@@ -18,31 +23,44 @@ def ingest(source: str, chunk_size: int = typer.Option(500, help="Chunk size for
     loader = TextLoader()
     docs = loader.load(source)
     console.print(f"Loaded {len(docs)} document(s).")
-    # In a real app, you would chunk documents here and persist them
     console.print(f"[bold green]Successfully ingested![/bold green]")
 
 @app.command()
-def run(query: str, config: str = typer.Option(None, help="Path to YAML config file")):
-    """Run a query through the RAG pipeline."""
-    # Build dummy pipeline
+def run(query: str, arch: str = typer.Option("basic", help="Architecture to run (basic, self, graph, multimodal)")):
+    """Run a query through the selected RAG architecture."""
+    # Build core components (Mock implementations)
     store = InMemoryVectorStore()
     retriever = BasicRetriever(store)
     generator = DummyGenerator()
-    pipeline = StandardRAGPipeline(retriever, generator)
+    
+    # Select architecture
+    if arch == "basic":
+        pipeline = BasicRAG(retriever, generator)
+    elif arch == "self":
+        pipeline = SelfRAG(retriever, generator)
+    elif arch == "graph":
+        pipeline = GraphRAG(generator)
+    elif arch == "multimodal":
+        pipeline = MultimodalRAG(retriever, generator)
+    else:
+        console.print(f"[bold red]Unknown architecture:[/bold red] {arch}")
+        raise typer.Exit(code=1)
 
-    # In a real app, store would be loaded from disk/DB
-    console.print(Panel.fit(f"[bold blue]Query:[/bold blue] {query}", title="Input"))
+    console.print(Panel.fit(f"[bold blue]Query:[/bold blue] {query}\n[bold yellow]Architecture:[/bold yellow] {arch.upper()}", title="Input"))
     
     response = pipeline.run(query)
     
-    console.print(Panel.fit(response, title="RAG Output", border_style="green"))
+    console.print(Panel.fit(response, title=f"RAG Output ({arch.upper()})", border_style="green"))
 
 @app.command()
-def evaluate(dataset: str = typer.Option(..., help="Path to evaluation dataset (JSON)")):
+def evaluate(
+    dataset: str = typer.Option(..., help="Path to evaluation dataset (JSON)"),
+    arch: str = typer.Option("basic", help="Architecture to evaluate")
+):
     """Evaluate the RAG pipeline against a dataset."""
     from rag_framework.evaluators.basic_evaluator import BasicEvaluator
     
-    console.print(f"[bold yellow]Evaluating pipeline using dataset:[/bold yellow] {dataset}")
+    console.print(f"[bold yellow]Evaluating {arch.upper()} pipeline using dataset:[/bold yellow] {dataset}")
     evaluator = BasicEvaluator()
     metrics = evaluator.evaluate([{"dummy": "data"}])
     

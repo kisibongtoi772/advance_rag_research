@@ -3,10 +3,24 @@ from typing import List, Dict, Any, Optional
 from pydantic import BaseModel, Field
 
 class Document(BaseModel):
-    """Core domain model representing a chunk of text."""
+    """Core domain model representing a chunk of text or multimodal data."""
     content: str
     metadata: Dict[str, Any] = Field(default_factory=dict)
     doc_id: Optional[str] = None
+    image_base64: Optional[str] = None  # For Multimodal RAG
+
+class GraphNode(BaseModel):
+    """Represents a node (entity) in Graph RAG."""
+    node_id: str
+    label: str
+    properties: Dict[str, Any] = Field(default_factory=dict)
+
+class GraphEdge(BaseModel):
+    """Represents an edge (relationship) in Graph RAG."""
+    source_id: str
+    target_id: str
+    relationship: str
+    weight: float = 1.0
 
 class BaseDataLoader(ABC):
     @abstractmethod
