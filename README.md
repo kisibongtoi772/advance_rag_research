@@ -1,97 +1,92 @@
 # Advance RAG Research Framework
 
-An Enterprise-grade, modular, and clean-architecture framework designed to build, test, and evaluate advanced Retrieval-Augmented Generation (RAG) systems. This project serves as a testing ground to benchmark standard RAG against highly optimized agentic architectures like Self-RAG and Graph-RAG.
+## Abstract
+
+The Advance RAG Research Framework is an enterprise-grade, modular architecture designed for the implementation, testing, and evaluation of advanced Retrieval-Augmented Generation (RAG) systems. The framework acts as a quantitative and qualitative testing ground to benchmark standard baseline RAG methodologies against highly optimized architectures, specifically Self-Reflective RAG (Self-RAG) and Graph-based RAG (Graph-RAG).
 
 ---
 
-## 🏗️ Project Structure
+## 1. System Architecture
 
-The codebase strictly adheres to Clean Architecture, segregating interfaces, core logic, and specific architectural implementations.
+The codebase adheres strictly to Clean Architecture principles, ensuring clear segregation between interfaces, core orchestration logic, and specific infrastructure implementations.
 
 ```text
 advance_rag_research/
-├── datasets/                 # Synthetic datasets (Corpus & QA Evaluation pairs)
-├── reports/                  # Benchmark and architectural evaluation reports
-│   ├── detailed_metrics.md
-│   └── executive_summary.md
+├── datasets/                 # Enterprise and Scientific benchmarking datasets
+├── reports/                  # Evaluation metrics and architectural findings
 ├── src/
 │   └── rag_framework/
-│       ├── architectures/    # Core RAG Orchestrations
-│       │   ├── base.py
-│       │   ├── basic_rag.py  # Standard Vector Search
-│       │   ├── graph_rag.py  # Knowledge Graph Traversal
-│       │   ├── multimodal_rag.py # Vision/Image processing
-│       │   └── self_rag.py   # Critique & Retry Loop
-│       ├── core/             # Pydantic domain models & Base Interfaces
-│       ├── data_loaders/     # Ingestion pipelines
-│       ├── embeddings/       # Embedding models (e.g., OpenAI, HuggingFace)
-│       ├── evaluators/       # Ragas-based evaluation logic
-│       ├── generators/       # LLM generation wrappers
-│       ├── retrievers/       # Retrieval logic
-│       ├── vector_stores/    # ChromaDB, InMemory, Pinecone, etc.
-│       └── cli.py            # Typer CLI application entry point
-├── .agents/skills/           # Automated Agent Skills (Git, Literature Search, etc.)
-└── pyproject.toml            # Python package configuration
+│       ├── architectures/    # Core RAG Orchestration logic (Basic, Self, Graph)
+│       ├── core/             # Pydantic domain models and Base Interfaces
+│       ├── data_loaders/     # Data ingestion and preprocessing pipelines
+│       ├── embeddings/       # Semantic embedding models (e.g., OpenAI text-embedding)
+│       ├── evaluators/       # Quantitative evaluation logic
+│       ├── generators/       # LLM generation components (OpenAI, Dummy)
+│       ├── retrievers/       # Information retrieval protocols
+│       ├── vector_stores/    # Storage layers (e.g., ChromaDB, InMemory)
+│       └── cli.py            # Command Line Interface application entry point
+├── .agents/skills/           # Automated Agent Skills for auxiliary operations
+└── pyproject.toml            # Python package configuration and dependencies
 ```
 
 ---
 
-## 🚀 Installation & Setup
+## 2. Prerequisites and Setup
 
-1. **Ensure Python 3.10+ is installed.**
-2. **Install the package in editable mode:**
+The framework requires a standard Python environment and an active OpenAI API key for live model generation and embedding.
+
+1. Ensure Python 3.10+ is installed on the host machine.
+2. Export the required authentication keys:
+   ```bash
+   export OPENAI_API_KEY="your_api_key_here"
+   ```
+3. Install the package dependencies in editable mode:
    ```bash
    pip install -e .
    ```
-   *(Alternatively, if dependencies expand, use `pip install -r requirements.txt` or `poetry install`)*
 
 ---
 
-## 💻 Usage (CLI Operations)
+## 3. Execution Protocols (CLI)
 
-The framework exposes a smart Typer CLI `rag-framework` (or you can run `cli.py` directly). It uses the `--arch` flag to seamlessly switch between the underlying RAG engines.
+The framework exposes a Typer-based CLI (`rag-framework`) for streamlined execution. It utilizes the `--arch` argument to hot-swap the underlying RAG orchestration engine.
 
-### 1. Ingesting Data
-Load and index documents into the Vector/Graph Store.
+### 3.1 Data Ingestion
+Loads and indexes documents into the selected storage layer.
 ```bash
 PYTHONPATH=src python3 src/rag_framework/cli.py ingest datasets/corpus.json --chunk-size 500
 ```
 
-### 2. Running Queries
-Test how different architectures handle specific questions.
+### 3.2 Query Execution
+Tests specific queries against the designated RAG architectures.
 
-**Test Basic RAG (Vector Search)**
+**Standard Vector Search (Basic RAG)**
 ```bash
 PYTHONPATH=src python3 src/rag_framework/cli.py run "What is the QuantumX processor?" --arch basic
 ```
 
-**Test Self-RAG (Anti-Hallucination)**
+**Anti-Hallucination Loop (Self-RAG)**
 ```bash
 PYTHONPATH=src python3 src/rag_framework/cli.py run "Who is the CEO of VisionAI?" --arch self
 ```
-*(Watch the console log as it critiques itself and refuses to hallucinate an answer).*
 
-**Test Graph RAG (Multi-hop Entity Reasoning)**
+**Multi-hop Entity Reasoning (Graph RAG)**
 ```bash
 PYTHONPATH=src python3 src/rag_framework/cli.py run "What product is made by the company acquired by NovaTech?" --arch graph
 ```
 
-**Test Multimodal RAG (Diagram Analysis)**
-```bash
-PYTHONPATH=src python3 src/rag_framework/cli.py run "What layer is at the bottom of Fig-A?" --arch multimodal
-```
-
-### 3. Running Automated Evaluation
-Run the evaluator module to benchmark a specific architecture against a JSON evaluation dataset.
+### 3.3 Automated Evaluation
+Executes the evaluator module to benchmark a specific architecture against a standardized JSON evaluation dataset, calculating Context Precision, Recall, and Faithfulness.
 ```bash
 PYTHONPATH=src python3 src/rag_framework/cli.py evaluate --dataset datasets/qa_eval.json --arch self
 ```
 
 ---
 
-## 📊 Evaluation Reports
+## 4. Evaluation Methodology
 
-We have conducted a thorough synthetic benchmark utilizing the `datasets/qa_eval.json` to measure *Context Precision*, *Context Recall*, *Faithfulness*, and *Hallucination Rates*.
+The framework utilizes structured datasets to rigorously test hallucination resistance, factual accuracy, and context retrieval precision. Detailed findings and metrics are documented in the `reports/` directory.
 
-- **[Executive Summary](reports/executive_summary.md)**: High-level overview and strategic recommendations for Enterprise deployment (Recommends a hybrid `Graph-Self-RAG` approach).
-- **[Detailed Metrics](reports/detailed_metrics.md)**: In-depth numerical breakdown of latency, token cost, and Ragas metrics for each test case.
+- **reports/executive_summary.md**: High-level strategic architectural recommendations for production environments.
+- **reports/detailed_metrics.md**: In-depth quantitative analysis of latency, token cost, and Ragas metrics.
+- **reports/real_scientific_metrics.md**: Evaluation results specifically focusing on high-density academic and scientific text parsing.

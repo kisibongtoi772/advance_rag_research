@@ -5,7 +5,8 @@ from rich.panel import Panel
 from rag_framework.data_loaders.text_loader import TextLoader
 from rag_framework.vector_stores.in_memory import InMemoryVectorStore
 from rag_framework.retrievers.basic_retriever import BasicRetriever
-from rag_framework.generators.dummy_generator import DummyGenerator
+from rag_framework.providers import ProviderFactory
+import os
 
 # Import architectures
 from rag_framework.architectures.basic_rag import BasicRAG
@@ -26,12 +27,25 @@ def ingest(source: str, chunk_size: int = typer.Option(500, help="Chunk size for
     console.print(f"[bold green]Successfully ingested![/bold green]")
 
 @app.command()
-def run(query: str, arch: str = typer.Option("basic", help="Architecture to run (basic, self, graph, multimodal)")):
+def run(
+    query: str, 
+    arch: str = typer.Option("basic", help="Architecture to run (basic, self, graph, multimodal)"),
+    provider: str = typer.Option("dummy", help="LLM Provider (openai, anthropic, google, deepseek, qwen, dummy)")
+):
     """Run a query through the selected RAG architecture."""
-    # Build core components (Mock implementations)
+    # Initialize Provider
+    try:
+        llm_provider = ProviderFactory.create(provider)
+        generator = llm_provider.get_generator()
+        embedding_model = llm_provider.get_embedding()
+    except Exception as e:
+        console.print(f"[bold red]Provider Error:[/bold red] {str(e)}")
+        raise typer.Exit(code=1)
+
+    # Build core components
     store = InMemoryVectorStore()
-    retriever = BasicRetriever(store)
-    generator = DummyGenerator()
+    retriever = BasicRetriever(store) # In a real scenario, retriever uses the embedding_model
+    
     
     # Select architecture
     if arch == "basic":

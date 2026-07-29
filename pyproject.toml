@@ -17,7 +17,10 @@ dependencies = [
     "langchain>=0.1.0",     # For adapter implementations
     "llama-index>=0.10.0",  # Alternative engine integration
     "chromadb>=0.4.0",      # Default vector store
-    "openai>=1.0.0",        # Default LLM provider
+    "openai>=1.0.0",        # OpenAI & DeepSeek provider
+    "anthropic>=0.18.0",    # Anthropic Claude provider
+    "google-generativeai",  # Google Gemini provider
+    "dashscope",            # Alibaba Qwen provider
 ]
 
 [project.scripts]
