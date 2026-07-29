@@ -13,6 +13,7 @@ from rag_framework.architectures.basic_rag import BasicRAG
 from rag_framework.architectures.self_rag import SelfRAG
 from rag_framework.architectures.graph_rag import GraphRAG
 from rag_framework.architectures.multimodal_rag import MultimodalRAG
+from rag_framework.architectures.hyde_rag import HydeRAG
 
 app = typer.Typer(help="Enterprise Multi-Architecture RAG Framework CLI")
 console = Console()
@@ -29,7 +30,7 @@ def ingest(source: str, chunk_size: int = typer.Option(500, help="Chunk size for
 @app.command()
 def run(
     query: str, 
-    arch: str = typer.Option("basic", help="Architecture to run (basic, self, graph, multimodal)"),
+    arch: str = typer.Option("basic", help="Architecture to run (basic, self, graph, multimodal, hyde)"),
     provider: str = typer.Option("dummy", help="LLM Provider (openai, anthropic, google, deepseek, qwen, dummy)")
 ):
     """Run a query through the selected RAG architecture."""
@@ -56,6 +57,8 @@ def run(
         pipeline = GraphRAG(generator)
     elif arch == "multimodal":
         pipeline = MultimodalRAG(retriever, generator)
+    elif arch == "hyde":
+        pipeline = HydeRAG(retriever, generator)
     else:
         console.print(f"[bold red]Unknown architecture:[/bold red] {arch}")
         raise typer.Exit(code=1)

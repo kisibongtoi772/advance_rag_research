@@ -14,6 +14,7 @@ This document presents a high-level technical assessment of the architectural st
 | **Self RAG** | Excellent | Excellent | Marginal | Excellent (Text-based) | Satisfactory (75%) |
 | **Graph RAG** | Excellent | Poor | Excellent | Excellent (Text-based) | Satisfactory (75%) |
 | **Multimodal RAG**| Excellent | Poor | Marginal | Excellent (Vision-based) | Satisfactory (75%) |
+| **HyDE RAG** | Outstanding | Poor | Marginal | Excellent (Text-based) | Satisfactory (75%) |
 
 ---
 
@@ -30,6 +31,9 @@ For complex queries requiring the linkage of disparate entities across multiple,
 
 ### 2.4 Multimodal Integration
 Handling structural diagrams, physical PDFs, and charted data requires passing rasterized image data directly to Vision-Language Models. While latency increases significantly, this approach circumvents the limitations of OCR-based text extraction.
+
+### 2.5 Zero-Shot Query Expansion (HyDE)
+The Hypothetical Document Embeddings (HyDE) architecture significantly enhances recall for sparse or poorly constructed user queries by generating a synthetic "ideal" document and embedding it for retrieval. This is highly recommended for consumer-facing RAG endpoints where query quality cannot be guaranteed.
 
 ## 3. Deployment Recommendation: Hybrid Architecture
 
